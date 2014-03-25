@@ -47,7 +47,7 @@ class HTMLMarkup {
 		return $this->getSingleStringReplace(
 			htmlspecialchars($hashtag),
 			sprintf(
-				'<a class="hashtag" href="%s%s"><span class="hash">#</span>%s</a>',
+				'<a class="hashtag" href="%s%s">#<span class="text">%s</span></a>',
 				self::TWITTER_SEARCH_URL,
 				urlencode($hashtag),
 				htmlspecialchars($entity['text'])
@@ -86,7 +86,7 @@ class HTMLMarkup {
 		return $this->getSingleStringReplace(
 			'@' . $screenNameHTML,
 			sprintf(
-				'<a class="user" href="%s%s" title="@%s"><span class="at">@</span>%s</a>',
+				'<a class="user" href="%s%s" title="@%s">@<span class="text">%s</span></a>',
 				self::TWITTER_BASE_URL,
 				urlencode($entity['text']),
 				htmlspecialchars($entity['userFullName']),
