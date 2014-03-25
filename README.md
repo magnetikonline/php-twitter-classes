@@ -108,7 +108,9 @@ echo($htmlMarkup->execute($resultItem));
 ```
 
 - `Twitter\HTMLMarkup->execute()` uses the returned tweet entities to generate anchor tags within the content. Each anchor will have a class assigned of `hashtag`, `url`, `user` and `media`.
-- Anchor types of `hashtag` and `user` will have their `#` and `@` symbols wrapped in `<span>` elements to allow easy removal of anchor hover underlines for these characters via CSS.
+- Anchor types of `hashtag` and `user` will have their `#` and `@` symbols wrapped in `<span>` elements to allow easy removal of anchor hover underlines for these characters via CSS which seems to be the Twitter style. Example:
+	- `<a class="hashtag" href="#hashtag"><span class="hash">#</span>hashtag</a>`
+	- `<a class="user" href="#username"><span class="at">@</span>username</a>`
 - Displayed truncation of long URLs can be controlled with the `Twitter\HTMLMarkup->setURLDisplayLength()` method (default of 20 characters). Set to `false` to disable.
 
 ## Example
