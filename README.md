@@ -1,5 +1,5 @@
 # PHP Twitter utility classes
-PHP classes for reading a users timeline and rendering the results to valid HTML5 markup. Built against the current (as of March 2014) Twitter [REST API v1.1](https://dev.twitter.com/docs/api/1.1) which has now superseded the disabled 1.0 API.
+PHP classes for reading a user's timeline and rendering the results to valid HTML5 markup. Built against the current (as of March 2014) Twitter [REST API v1.1](https://dev.twitter.com/docs/api/1.1) which has now superseded the disabled 1.0 API.
 
 - [Requirements](#requirements)
 - [Twitter\UserTimeline()](#twitterusertimeline)
@@ -71,7 +71,7 @@ foreach ($userTimeline->resultList() as $resultItem) {
 - In order to make [OAuth 1.0a](https://dev.twitter.com/docs/auth/oauth/faq) API requests to Twitter you need API keys/access tokens. These can be generated against your Twitter user account at https://apps.twitter.com/, giving you a valid `API key`, `API secret`, `Access token` and `Access token secret`.
 - The `Twitter\UserTimeline()->resultList()` method has been implemented as a PHP generator to lazy load the Twitter timeline in batches (up to a current maximum of `3200` tweets). Batch fetch size can be controlled with the `Twitter\UserTimeline()->setFetchBatchSize()` method (default of 10).
 - The returned generator array should be easy to understand, the only real notable being that IDs are currently returned as strings due to their magnitude, keeping 32bit PHP instances happy. There is a great amount of meta data returned per each Tweet, here I am just returning what is important to my target application.
-- API v1.1 introduced the excellent concept of [entities](https://dev.twitter.com/docs/entities#tweets) for Tweets which gives a collection of external resources associated to a tweet. Types returned here will be one of:
+- API v1.1 introduced the concept of [entities](https://dev.twitter.com/docs/entities#tweets) for Tweets which gives a collection of external resources associated to a tweet. Types returned here will be one of:
 	- `hashtag`
 	- `url`
 	- `user` (user mention)
