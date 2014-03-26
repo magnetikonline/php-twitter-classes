@@ -7,12 +7,12 @@ class HTMLMarkup {
 	const TWITTER_BASE_URL = 'https://twitter.com/';
 	const TWITTER_SEARCH_URL = 'https://twitter.com/search?q=';
 
-	private $URLDisplayLength = 20;
+	private $URLMaxDisplayLength = 20;
 
 
-	public function setURLDisplayLength($length) {
+	public function setURLMaxDisplayLength($length) {
 
-		$this->URLDisplayLength = $length;
+		$this->URLMaxDisplayLength = $length;
 	}
 
 	public function execute(array $tweetData) {
@@ -64,8 +64,8 @@ class HTMLMarkup {
 		$URLDisplay = preg_replace('/^https?:\/\//','',$url);
 
 		// truncate display url length if required
-		$URLDisplay = (($this->URLDisplayLength !== false) && (strlen($URLDisplay) > $this->URLDisplayLength))
-			? substr($URLDisplay,0,$this->URLDisplayLength) . '...'
+		$URLDisplay = (($this->URLMaxDisplayLength !== false) && (strlen($URLDisplay) > $this->URLMaxDisplayLength))
+			? substr($URLDisplay,0,$this->URLMaxDisplayLength) . '...'
 			: $URLDisplay;
 
 		return $this->getSingleStringReplace(

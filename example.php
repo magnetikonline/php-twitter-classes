@@ -12,14 +12,14 @@ $userTimeline = new Twitter\UserTimeline(
 	'twitter-screen-name'
 );
 
-$htmlMarkup = new Twitter\HTMLMarkup();
-$htmlMarkup->setURLDisplayLength(50);
+$HTMLMarkup = new Twitter\HTMLMarkup();
+$HTMLMarkup->setURLMaxDisplayLength(50);
 
 
 $fetchCount = 0;
 foreach ($userTimeline->resultList() as $resultItem) {
 	print_r($resultItem);
-	echo("\n" . $htmlMarkup->execute($resultItem) . "\n\n");
+	echo("\n" . $HTMLMarkup->execute($resultItem) . "\n\n");
 
 	if ($fetchCount++ > 5) break;
 }

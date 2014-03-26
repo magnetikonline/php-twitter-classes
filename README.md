@@ -88,10 +88,10 @@ Simple example:
 <?php
 require('twitter/htmlmarkup.php');
 $resultItem = $userTimeline->resultList()->current();
-$htmlMarkup = new Twitter\HTMLMarkup();
-$htmlMarkup->setURLDisplayLength(50);
+$HTMLMarkup = new Twitter\HTMLMarkup();
+$HTMLMarkup->setURLMaxDisplayLength(50);
 
-echo($htmlMarkup->execute($resultItem));
+echo($HTMLMarkup->execute($resultItem));
 ```
 
 ... will produce (wrapped for readability):
@@ -112,7 +112,7 @@ echo($htmlMarkup->execute($resultItem));
 - Anchor types of `hashtag` and `user` will have their respective text wrapped in `<span class="text">` elements to allow removal of anchor hover underlines for the preceding `@` and `#` characters via CSS to match default Twitter styling. Example:
 	- `<a class="hashtag" href="#hashtag">#<span class="text">hashtag</span></a>`
 	- `<a class="user" href="#username">@<span class="text">username</span></a>`
-- Displayed truncation of long URLs can be controlled with the `Twitter\HTMLMarkup->setURLDisplayLength()` method (default of 20 characters). Set `false` to disable truncation.
+- Displayed truncation of long URLs can be controlled with the `Twitter\HTMLMarkup->setURLMaxDisplayLength()` method (default of 20 characters). Set `false` to disable truncation.
 
 ## Example
 See the provided [example.php](example.php) for a demo of fetching a total of five tweets, emitting the PHP array structure of each and then marking up the result as HTML5.
