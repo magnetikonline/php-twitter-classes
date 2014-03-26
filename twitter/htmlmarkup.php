@@ -86,7 +86,7 @@ class HTMLMarkup {
 		return $this->getSingleStringReplace(
 			'@' . $screenNameHTML,
 			sprintf(
-				'<a class="user" href="%s%s" title="@%s">@<span class="text">%s</span></a>',
+				'<a class="user" href="%s%s" title="%s">@<span class="text">%s</span></a>',
 				self::TWITTER_BASE_URL,
 				urlencode($entity['text']),
 				htmlspecialchars($entity['userFullName']),
