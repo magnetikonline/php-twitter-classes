@@ -20,7 +20,11 @@ class UserTimeline {
 	private $fetchBatchSize = 10;
 
 
-	public function __construct($APIKey,$APISecret,$accessToken,$accessTokenSecret,$screenName) {
+	public function __construct(
+		$APIKey,$APISecret,
+		$accessToken,$accessTokenSecret,
+		$screenName
+	) {
 
 		$this->APIKey = $APIKey;
 		$this->APISecret = $APISecret;
@@ -146,6 +150,8 @@ class UserTimeline {
 		// - tweet ID, created unix timestamp, publishing user details
 		// - tweet text, reply to ID, is retweet flag
 		// - tweet entities
+		$isReplyTo = ($tweetSource['in_reply_to_status_id_str'] !== null);
+
 		return [
 			'ID' => $tweetData['id_str'],
 			'created' => strtotime($tweetData['created_at']),
@@ -153,9 +159,9 @@ class UserTimeline {
 			'userFullName' => $tweetSource['user']['name'],
 			'userScreenName' => $tweetSource['user']['screen_name'],
 			'text' => trim(preg_replace('/ +/',' ',$tweetSource['text'])),
-			'replyToID' => ($tweetData['in_reply_to_status_id_str'] !== null)
-				? $tweetData['in_reply_to_status_id_str']
-				: false,
+			'replyToID' => ($isReplyTo) ? $tweetSource['in_reply_to_status_id_str'] : false,
+			'replyToUserID' => ($isReplyTo) ? $tweetSource['in_reply_to_user_id_str'] : false,
+			'replyToUserScreenName' => ($isReplyTo) ? $tweetSource['in_reply_to_screen_name'] : false,
 			'retweetCreated' => ($isRetweet) ? strtotime($tweetSource['created_at']) : false,
 			'entityList' => $tweetEntities
 		];

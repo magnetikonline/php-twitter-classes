@@ -7,8 +7,8 @@ PHP classes for reading a user's timeline and rendering the results to valid HTM
 - [Example](#example)
 
 ## Requirements
-- PHP 5.5 (using [Generators](http://www.php.net/manual/en/language.generators.php) for working over timelines).
-- [BCMath](http://www.php.net/manual/en/book.bc.php) for dealing with large tweet IDs.
+- PHP 5.5 (using [Generators](http://php.net/manual/en/language.generators.php) for working over timelines).
+- [BCMath](http://php.net/manual/en/book.bc.php) for dealing with large tweet IDs.
 - [cURL](https://php.net/curl) for HTTP calls.
 
 ## Twitter\UserTimeline()
@@ -42,7 +42,9 @@ foreach ($userTimeline->resultList() as $resultItem) {
 		[userFullName] => Peter Mescalchin
 		[userScreenName] => magnetikonline
 		[text] => Packaged up my PHP classes on GitHub for reading Twitter user timelines via the v1.1 API and marking up to nice HTML https://t.co/97rrSunyrk
-		[replyToID] => // note: false if NOT a retweet
+		[replyToID] => // note: false if NOT a reply
+		[replyToUserID] => // note: false if NOT a reply
+		[replyToUserScreenName] => // note: false if NOT a reply
 		[retweetCreated] => // note: false if NOT a retweet
 		[entityList] => Array
 			(
