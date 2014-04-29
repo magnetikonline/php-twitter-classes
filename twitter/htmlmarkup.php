@@ -7,7 +7,7 @@ class HTMLMarkup {
 	const TWITTER_BASE_URL = 'https://twitter.com/';
 	const TWITTER_SEARCH_URL = 'https://twitter.com/search?q=';
 
-	private $URLMaxDisplayLength = 20;
+	private $URLMaxDisplayLength = false;
 
 
 	public function setURLMaxDisplayLength($length) {
@@ -61,19 +61,25 @@ class HTMLMarkup {
 		// save target url, remove leading 'https?://' from display url
 		$url = $entity['url'];
 		$urlHTML = htmlspecialchars($url);
-		$URLDisplay = preg_replace('/^https?:\/\//','',$url);
+		$urlDisplay = preg_replace('/^https?:\/\//','',$url);
+		$hasTruncate = false;
 
 		// truncate display url length if required
-		$URLDisplay = (($this->URLMaxDisplayLength !== false) && (strlen($URLDisplay) > $this->URLMaxDisplayLength))
-			? substr($URLDisplay,0,$this->URLMaxDisplayLength) . '...'
-			: $URLDisplay;
+		if (
+			($this->URLMaxDisplayLength !== false) &&
+			(strlen($urlDisplay) > $this->URLMaxDisplayLength)
+		) {
+			$urlDisplay = substr($urlDisplay,0,$this->URLMaxDisplayLength) . '...';
+			$hasTruncate = true;
+		}
 
 		return $this->getSingleStringReplace(
 			htmlspecialchars($entity['text']),
 			sprintf(
-				'<a class="%s" href="%s" title="%s">%s</a>',
-				$type,$urlHTML,$urlHTML,
-				htmlspecialchars($URLDisplay)
+				'<a class="%s" href="%s"%s>%s</a>',
+				$type,$urlHTML,
+				($hasTruncate) ? ' title="' . $urlHTML . '"' : '',
+				htmlspecialchars($urlDisplay)
 			),
 			$text
 		);

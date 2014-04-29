@@ -51,7 +51,7 @@ class UserTimeline {
 			// only get tweets AFTER a given Tweet ID?
 			if ($sinceTweetID !== false) $GETList['since_id'] = $sinceTweetID;
 
-			// if a subsequent tweet fetch only get tweets older than the last one digested
+			// if a subsequent tweet fetch API call, only get tweets older than the last one digested
 			if ($maxTweetID) $GETList['max_id'] = bcsub($maxTweetID,'1');
 
 			// make request
