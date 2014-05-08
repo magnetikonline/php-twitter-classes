@@ -79,7 +79,7 @@ foreach ($userTimeline->resultList() as $resultItem) {
 	- `url`
 	- `user` (user mention)
 	- `media` (Twitter photo upload)
-- The OAuth 1.0a routines used internally have been bundled up into fairly easy to use [private methods](twitter/usertimeline.php#L164-L272) which should make it simple to extend this with additional Twitter API method calls if desired. The Twitter API documents give a great step by step breakdown to the [OAuth request generation process](https://dev.twitter.com/docs/auth/authorizing-request) used here.
+- The OAuth 1.0a routines used internally have been bundled up into a set of fairly easy to use [private functions](twitter/usertimeline.php#L170-L278) which should make it simple to extend this with further API method calls if desired. The Twitter API documents give a great step by step breakdown to the [OAuth request generation process](https://dev.twitter.com/docs/auth/authorizing-request) used here.
 
 ## Twitter\HTMLMarkup()
 Takes a data structure emitted by `Twitter\UserTimeline()->resultList()` above and generates a valid HTML5 representation of the tweet.
