@@ -3,7 +3,7 @@ require('twitter/usertimeline.php');
 require('twitter/htmlmarkup.php');
 
 
-// note: create a new Twitter app at: https://apps.twitter.com/ for these values
+// note: create a Twitter app at https://apps.twitter.com/ for these values
 $userTimeline = new Twitter\UserTimeline(
 	'API key',
 	'API secret',

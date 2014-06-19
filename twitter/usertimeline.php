@@ -169,16 +169,17 @@ class UserTimeline {
 
 	private function execOAuthRequest($HTTPMethod,$URL,array $GETList = [],array $POSTList = []) {
 
-		$getURLEncodedQuerystring = function(array $dataList,$isPOST = false) {
+		$getURLEncodedQuerystring = function(array $parameterList,$isPOST = false) {
 
-			if (!$dataList) return '';
+			if (!$parameterList) return '';
 
-			$encodedDataList = [];
-			foreach ($dataList as $key => $value) {
-				$encodedDataList[] = urlencode($key) . '=' . urlencode($value);
-			}
+			// convert $parameterList to url encoded key=value pairs
+			array_walk($parameterList,function(&$value,$key) {
 
-			return (($isPOST) ? '' : '?') . implode('&',$encodedDataList);
+				$value = urlencode($key) . '=' . urlencode($value);
+			});
+
+			return (($isPOST) ? '' : '?') . implode('&',$parameterList);
 		};
 
 		$curlConn = curl_init();
