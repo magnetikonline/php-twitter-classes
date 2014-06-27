@@ -4,10 +4,10 @@ namespace Twitter;
 
 class UserTimeline {
 
+	const HTTP_CODE_OK = 200;
 	const OAUTH_VERSION = '1.0';
 	const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 	const OAUTH_HMAC_ALGO = 'SHA1';
-	const HTTP_CODE_OK = 200;
 
 	const USER_TIMELINE_API_URL = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
 	const USER_TIMELINE_API_HTTP_METHOD = 'GET';
