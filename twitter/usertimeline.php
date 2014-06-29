@@ -229,10 +229,7 @@ class UserTimeline {
 		// create OAuth signature
 		$OAuthParameterList['oauth_signature'] = $this->buildOAuthHTTPAuthorizationHeaderSignature(
 			$HTTPMethod,$URL,
-			array_merge(
-				$OAuthParameterList,
-				$GETList,$POSTList
-			)
+			$OAuthParameterList + $GETList + $POSTList
 		);
 
 		// build OAuth authorization header and return
