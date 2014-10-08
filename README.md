@@ -1,12 +1,12 @@
 # PHP Twitter utility classes
 PHP classes for reading a user's timeline and rendering the results to valid HTML5 markup. Built against the current (as of March 2014) Twitter [REST API v1.1](https://dev.twitter.com/docs/api/1.1) which has now superseded the [disabled v1.0 API](https://blog.twitter.com/2013/api-v1-is-retired).
 
-- [Requirements](#requirements)
+- [Requires](#requires)
 - [Twitter\UserTimeline()](#twitterusertimeline)
 - [Twitter\HTMLMarkup()](#twitterhtmlmarkup)
 - [Example](#example)
 
-## Requirements
+## Requires
 - PHP 5.5 (using [Generators](http://php.net/manual/en/language.generators.php) for working over timelines).
 - [BCMath](http://php.net/manual/en/book.bc.php) for dealing with large tweet IDs.
 - [cURL](https://php.net/curl) for HTTP calls.
@@ -117,4 +117,4 @@ echo($HTMLMarkup->execute($resultItem));
 - Displayed truncation of long URLs can be controlled with the `Twitter\HTMLMarkup->setURLMaxDisplayLength()` method (default of 20 characters). Set `false` to disable truncation.
 
 ## Example
-See the provided [example.php](example.php) for a demo of fetching a total of five tweets, emitting the PHP array structure of each and then marking up the result as HTML5.
+See the provided [example.php](example.php) for a demo of fetching a total of five tweets, emitting the PHP array structure of each and marking up the result as HTML5.
