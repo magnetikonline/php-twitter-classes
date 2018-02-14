@@ -4,7 +4,7 @@ namespace Twitter;
 
 class UserTimeline {
 
-	const HTTP_CODE_OK = 200;
+	const HTTP_OK = 200;
 	const OAUTH_VERSION = '1.0';
 	const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 	const OAUTH_HMAC_ALGO = 'SHA1';
@@ -17,7 +17,9 @@ class UserTimeline {
 	private $accessToken;
 	private $accessTokenSecret;
 	private $screenName;
+
 	private $fetchBatchSize = 10;
+	private $extendedTweetMode = false;
 
 
 	public function __construct(
@@ -38,21 +40,35 @@ class UserTimeline {
 		$this->fetchBatchSize = $size;
 	}
 
+	public function setExtendedTweetMode($enabled) {
+
+		$this->extendedTweetMode = $enabled;
+	}
+
 	public function resultList($sinceTweetID = false) {
 
-		$maxTweetID = ''; // as string since Tweet IDs are 64bit integers
+		$lastTweetID = 0;
 
-		while ($maxTweetID !== false) {
+		while ($lastTweetID !== false) {
 			$GETList = [
 				'count' => $this->fetchBatchSize,
 				'screen_name' => $this->screenName
 			];
 
-			// only get tweets AFTER a given Tweet ID?
-			if ($sinceTweetID !== false) $GETList['since_id'] = $sinceTweetID;
+			// after tweets in extended (more than 140chars) mode?
+			if ($this->extendedTweetMode) {
+				$GETList['tweet_mode'] = 'extended';
+			}
+
+			// only get tweets AFTER a given tweet ID?
+			if ($sinceTweetID !== false) {
+				$GETList['since_id'] = $sinceTweetID;
+			}
 
 			// if a subsequent tweet fetch API call, only get tweets older than the last one digested
-			if ($maxTweetID) $GETList['max_id'] = bcsub($maxTweetID,'1');
+			if ($lastTweetID) {
+				$GETList['max_id'] = ($lastTweetID - 1);
+			}
 
 			// make request
 			list($responseHTTPCode,$responseBody) = $this->execOAuthRequest(
@@ -61,18 +77,18 @@ class UserTimeline {
 				$GETList
 			);
 
-			if ($responseHTTPCode != self::HTTP_CODE_OK) {
+			if ($responseHTTPCode != self::HTTP_OK) {
 				// response error
 				throw new \Exception('Twitter fetch user timeline error');
 			}
 
 			// yield results
-			$maxTweetID = false;
+			$lastTweetID = false;
 			foreach (json_decode($responseBody,true) as $tweetData) {
 				yield $this->resultListParseTweet($tweetData);
 
 				// save current tweet ID for next API fetch block
-				$maxTweetID = $tweetData['id_str'];
+				$lastTweetID = $tweetData['id'];
 			}
 		}
 	}
@@ -86,8 +102,10 @@ class UserTimeline {
 		// parse tweet entities - hashtags/urls/user mentions/media (optional)
 		$tweetEntities = [];
 		foreach ($tweetSource['entities'] as $entityType => $entityCollection) {
-			// if no data in entity collection, skip
-			if (!$entityCollection) continue;
+			if (!$entityCollection) {
+				// if no data in entity collection, skip
+				continue;
+			}
 
 			// parse entity based on its type
 			if ($entityType == 'hashtags') {
@@ -95,8 +113,8 @@ class UserTimeline {
 					// add hash tag entity
 					$tweetEntities[] = [
 						'type' => 'hashtag',
-						'text' => $entityItem['text'],
-						'indices' => $entityItem['indices']
+						'indices' => $entityItem['indices'],
+						'text' => $entityItem['text']
 					];
 				}
 
@@ -105,9 +123,9 @@ class UserTimeline {
 					// add url entity
 					$tweetEntities[] = [
 						'type' => 'url',
+						'indices' => $entityItem['indices'],
 						'text' => $entityItem['url'],
 						'url' => trim($entityItem['expanded_url']),
-						'indices' => $entityItem['indices']
 					];
 				}
 
@@ -116,10 +134,10 @@ class UserTimeline {
 					// add user mention
 					$tweetEntities[] = [
 						'type' => 'user',
+						'indices' => $entityItem['indices'],
 						'text' => $entityItem['screen_name'],
-						'userID' => $entityItem['id_str'],
-						'userFullName' => trim($entityItem['name']),
-						'indices' => $entityItem['indices']
+						'userID' => $entityItem['id'],
+						'userFullName' => trim($entityItem['name'])
 					];
 				}
 
@@ -128,21 +146,24 @@ class UserTimeline {
 					// add twitter media item
 					$tweetEntities[] = [
 						'type' => 'media',
+						'indices' => $entityItem['indices'],
 						'text' => $entityItem['url'],
-						'url' => trim($entityItem['expanded_url']),
-						'indices' => $entityItem['indices']
+						'url' => trim($entityItem['expanded_url'])
 					];
 				}
 			}
 		}
 
-		// order parsed entites by their position in the tweet text
+		// order entities by their position in the tweet text
 		usort($tweetEntities,function($a,$b) {
 
 			$a = $a['indices'][0];
 			$b = $b['indices'][0];
 
-			if ($a == $b) return 0;
+			if ($a == $b) {
+				return 0;
+			}
+
 			return ($a < $b) ? -1 : 1;
 		});
 
@@ -150,17 +171,27 @@ class UserTimeline {
 		// - tweet ID, created unix timestamp, publishing user details
 		// - tweet text, reply to ID, is retweet flag
 		// - tweet entities
-		$isReplyTo = ($tweetSource['in_reply_to_status_id_str'] !== null);
+		$isReplyTo = ($tweetSource['in_reply_to_status_id'] !== null);
+
+		// fetch either default (140 chars or less), or extended text for tweet
+		$tweetText = ($this->extendedTweetMode)
+			? $tweetSource['full_text']
+			: $tweetSource['text'];
 
 		return [
-			'ID' => $tweetData['id_str'],
+			'ID' => $tweetData['id'],
 			'created' => strtotime($tweetData['created_at']),
-			'userID' => $tweetSource['user']['id_str'],
+			'userID' => $tweetSource['user']['id'],
 			'userFullName' => $tweetSource['user']['name'],
 			'userScreenName' => $tweetSource['user']['screen_name'],
-			'text' => trim(preg_replace('/ +/',' ',$tweetSource['text'])),
-			'replyToID' => ($isReplyTo) ? $tweetSource['in_reply_to_status_id_str'] : false,
-			'replyToUserID' => ($isReplyTo) ? $tweetSource['in_reply_to_user_id_str'] : false,
+			'text' => trim(
+				preg_replace(
+					'/ +/',' ',
+					htmlspecialchars_decode($tweetText)
+				)
+			),
+			'replyToID' => ($isReplyTo) ? $tweetSource['in_reply_to_status_id'] : false,
+			'replyToUserID' => ($isReplyTo) ? $tweetSource['in_reply_to_user_id'] : false,
 			'replyToUserScreenName' => ($isReplyTo) ? $tweetSource['in_reply_to_screen_name'] : false,
 			'retweetCreated' => ($isRetweet) ? strtotime($tweetSource['created_at']) : false,
 			'entityList' => $tweetEntities
@@ -169,9 +200,11 @@ class UserTimeline {
 
 	private function execOAuthRequest($HTTPMethod,$URL,array $GETList = [],array $POSTList = []) {
 
-		$getURLEncodedQuerystring = function(array $parameterList,$isPOST = false) {
+		$getURLEncodedList = function(array $parameterList,$isPOST = false) {
 
-			if (!$parameterList) return '';
+			if (!$parameterList) {
+				return '';
+			}
 
 			// convert $parameterList to url encoded key=value pairs
 			array_walk($parameterList,function(&$value,$key) {
@@ -192,8 +225,7 @@ class UserTimeline {
 				],
 				CURLOPT_POST => ($POSTList) ? true : false,
 				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_URL => $URL . $getURLEncodedQuerystring($GETList)
-				//CURLOPT_SSL_VERIFYPEER => false
+				CURLOPT_URL => $URL . $getURLEncodedList($GETList)
 			]
 		);
 
@@ -201,7 +233,7 @@ class UserTimeline {
 			// add POST data to request
 			curl_setopt(
 				$curlConn,CURLOPT_POSTFIELDS,
-				$getURLEncodedQuerystring($POSTList,true)
+				$getURLEncodedList($POSTList,true)
 			);
 		}
 
@@ -214,7 +246,7 @@ class UserTimeline {
 		return [$responseHTTPCode,$responseBody];
 	}
 
-	private function buildOAuthHTTPAuthorizationHeader($HTTPMethod,$URL,array $GETList = [],array $POSTList = []) {
+	private function buildOAuthHTTPAuthorizationHeader($HTTPMethod,$URL,array $GETList,array $POSTList) {
 
 		// build source data list in key/value pairs
 		$OAuthParameterList = [
@@ -227,7 +259,7 @@ class UserTimeline {
 		];
 
 		// create OAuth signature
-		$OAuthParameterList['oauth_signature'] = $this->buildOAuthHTTPAuthorizationHeaderSignature(
+		$OAuthParameterList['oauth_signature'] = $this->buildOAuthHTTPSignature(
 			$HTTPMethod,$URL,
 			$OAuthParameterList + $GETList + $POSTList
 		);
@@ -241,11 +273,14 @@ class UserTimeline {
 		return 'Authorization: OAuth ' . implode(', ',$authItemList);
 	}
 
-	private function buildOAuthHTTPAuthorizationHeaderSignature($HTTPMethod,$URL,array $parameterList) {
+	private function buildOAuthHTTPSignature($HTTPMethod,$URL,array $parameterList) {
 
 		$getRawURLEncodeList = function(array $dataList) {
 
-			foreach ($dataList as &$dataItem) $dataItem = rawurlencode($dataItem);
+			foreach ($dataList as &$dataItem) {
+				$dataItem = rawurlencode($dataItem);
+			}
+
 			return $dataList;
 		};
 
@@ -259,7 +294,9 @@ class UserTimeline {
 		uksort($parameterList,'strcmp');
 
 		$parameterDataList = [];
-		foreach ($parameterList as $key => $value) $parameterDataList[] = $key . '=' . $value;
+		foreach ($parameterList as $key => $value) {
+			$parameterDataList[] = $key . '=' . $value;
+		}
 
 		// calculate signature and return
 		return base64_encode(hash_hmac(

@@ -69,7 +69,7 @@ class HTMLMarkup {
 			($this->URLMaxDisplayLength !== false) &&
 			(strlen($urlDisplay) > $this->URLMaxDisplayLength)
 		) {
-			$urlDisplay = substr($urlDisplay,0,$this->URLMaxDisplayLength) . '...';
+			$urlDisplay = substr($urlDisplay,0,$this->URLMaxDisplayLength) . '…';
 			$hasTruncate = true;
 		}
 
