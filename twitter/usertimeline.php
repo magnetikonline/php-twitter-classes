@@ -3,7 +3,6 @@ namespace Twitter;
 
 
 class UserTimeline {
-
 	const HTTP_OK = 200;
 	const OAUTH_VERSION = '1.0';
 	const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
@@ -36,17 +35,14 @@ class UserTimeline {
 	}
 
 	public function setFetchBatchSize($size) {
-
 		$this->fetchBatchSize = $size;
 	}
 
 	public function setExtendedTweetMode($enabled) {
-
 		$this->extendedTweetMode = $enabled;
 	}
 
 	public function resultList($sinceTweetID = false) {
-
 		$lastTweetID = 0;
 
 		while ($lastTweetID !== false) {
@@ -94,7 +90,6 @@ class UserTimeline {
 	}
 
 	private function resultListParseTweet(array $tweetData) {
-
 		// get retweet status
 		$isRetweet = isset($tweetData['retweeted_status']);
 		$tweetSource = ($isRetweet) ? $tweetData['retweeted_status'] : $tweetData;
@@ -156,7 +151,6 @@ class UserTimeline {
 
 		// order entities by their position in the tweet text
 		usort($tweetEntities,function($a,$b) {
-
 			$a = $a['indices'][0];
 			$b = $b['indices'][0];
 
@@ -199,9 +193,7 @@ class UserTimeline {
 	}
 
 	private function execOAuthRequest($HTTPMethod,$URL,array $GETList = [],array $POSTList = []) {
-
 		$getURLEncodedList = function(array $parameterList,$isPOST = false) {
-
 			if (!$parameterList) {
 				return '';
 			}
@@ -247,7 +239,6 @@ class UserTimeline {
 	}
 
 	private function buildOAuthHTTPAuthorizationHeader($HTTPMethod,$URL,array $GETList,array $POSTList) {
-
 		// build source data list in key/value pairs
 		$OAuthParameterList = [
 			'oauth_consumer_key' => $this->APIKey,
@@ -274,7 +265,6 @@ class UserTimeline {
 	}
 
 	private function buildOAuthHTTPSignature($HTTPMethod,$URL,array $parameterList) {
-
 		$getRawURLEncodeList = function(array $dataList) {
 
 			foreach ($dataList as &$dataItem) {

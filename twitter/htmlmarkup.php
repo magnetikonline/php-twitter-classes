@@ -3,7 +3,6 @@ namespace Twitter;
 
 
 class HTMLMarkup {
-
 	const TWITTER_BASE_URL = 'https://twitter.com/';
 	const TWITTER_SEARCH_URL = 'https://twitter.com/search?q=';
 
@@ -11,12 +10,10 @@ class HTMLMarkup {
 
 
 	public function setURLMaxDisplayLength($length) {
-
 		$this->URLMaxDisplayLength = $length;
 	}
 
 	public function execute(array $tweetData) {
-
 		$tweetText = htmlspecialchars($tweetData['text']);
 
 		// work over the entity list for the tweet and apply to text
@@ -41,7 +38,6 @@ class HTMLMarkup {
 	}
 
 	private function getAppliedEntityHashtag($text,array $entity) {
-
 		$hashtag = '#' . $entity['text'];
 
 		return $this->getSingleStringReplace(
@@ -57,7 +53,6 @@ class HTMLMarkup {
 	}
 
 	private function getAppliedEntityURLMedia($type,$text,array $entity) {
-
 		// save target url, remove leading 'https?://' from display url
 		$url = $entity['url'];
 		$urlHTML = htmlspecialchars($url);
@@ -86,7 +81,6 @@ class HTMLMarkup {
 	}
 
 	private function getAppliedEntityUserMention($text,array $entity) {
-
 		$screenNameHTML = htmlspecialchars($entity['text']);
 
 		return $this->getSingleStringReplace(
@@ -103,7 +97,6 @@ class HTMLMarkup {
 	}
 
 	private function getSingleStringReplace($search,$replace,$text) {
-
 		$position = strpos($text,$search);
 		return ($position !== false)
 			? substr_replace($text,$replace,$position,strlen($search))

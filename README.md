@@ -1,4 +1,5 @@
 # PHP Twitter utility classes
+
 PHP classes for reading a user's timeline and rendering the results to valid HTML5 markup. Built against the current (as of March 2014) Twitter [REST API v1.1](https://developer.twitter.com/en/docs/api-reference-index) which has now superseded the [disabled v1.0 API](https://blog.twitter.com/developer/en_us/a/2013/api-v1-is-retired.html).
 
 - [Requires](#requires)
@@ -7,10 +8,12 @@ PHP classes for reading a user's timeline and rendering the results to valid HTM
 - [Example](#example)
 
 ## Requires
+
 - PHP 5.5 (using [Generators](https://secure.php.net/manual/en/language.generators.php) for working over timelines).
 - [cURL](https://php.net/curl) for HTTP calls.
 
 ## Twitter\UserTimeline()
+
 Allows reading of a user's timeline via the REST API v1.1 [GET statuses/user_timeline](https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline) method and parsing the returned JSON tweet data into usable PHP array structures.
 
 A basic usage example:
@@ -87,6 +90,7 @@ foreach ($userTimeline->resultList() as $resultItem) {
 - The OAuth 1.0a routines used internally have been bundled up into a set of fairly easy to use [private functions](twitter/usertimeline.php#L201-L313) which should make it simple to extend this with further API method calls if desired. The Twitter API documentation provides a step by step breakdown to the [OAuth request generation process](https://developer.twitter.com/en/docs/basics/authentication/guides/authorizing-a-request) required.
 
 ## Twitter\HTMLMarkup()
+
 Takes a data structure emitted by `Twitter\UserTimeline()->resultList()` above and generates a valid HTML5 representation of the tweet.
 
 Simple example:
@@ -122,4 +126,5 @@ echo($HTMLMarkup->execute($resultItem));
 - Displayed truncation of long URLs can be controlled with the `Twitter\HTMLMarkup->setURLMaxDisplayLength()` method (default of 20 characters). Set `false` to disable truncation.
 
 ## Example
+
 See the provided [example.php](example.php) for a demo of fetching a total of five tweets, emitting the PHP array structure of each and marking up the result as HTML5.
